@@ -1,5 +1,5 @@
 {
-  "name": "@otwld/nestjs-kubernetes",
+  "name": "@otwld/nestjs-kubernetes-root",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {},
@@ -32,7 +32,6 @@
     "verdaccio": "^5.0.4"
   },
   "workspaces": [
-    "packages/*",
     "libs/*"
   ],
   "dependencies": {
