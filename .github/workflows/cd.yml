@@ -6,6 +6,7 @@ on:
       - main
     paths:
      - libs/**
+     - .github/workflows/helm-cd.yml
 
 
 permissions:
