@@ -3,6 +3,13 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nestjs-kubernetes/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
   "tags": [],
   "targets": {
     "build": {
@@ -14,6 +21,11 @@
         "packageJson": "libs/nestjs-kubernetes/package.json",
         "main": "libs/nestjs-kubernetes/src/index.ts",
         "assets": ["libs/nestjs-kubernetes/*.md", "README.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
       }
     }
   }
