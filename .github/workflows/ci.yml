@@ -8,7 +8,7 @@ on:
       - reopened
     paths:
       - libs/**
-      - .github/workflows/helm-cd.yml
+      - .github/workflows/ci.yml
 
 permissions:
   actions: read
