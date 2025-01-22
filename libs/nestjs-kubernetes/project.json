@@ -24,6 +24,13 @@
       }
     },
     "nx-release-publish": {
+      "dependsOn": [
+        {
+          "projects": ["{name}"],
+          "target": "build",
+          "params": "forward"
+        }
+      ],
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
