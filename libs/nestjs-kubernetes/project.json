@@ -1,0 +1,20 @@
+{
+  "name": "nestjs-kubernetes",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/nestjs-kubernetes/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/nestjs-kubernetes",
+        "tsConfig": "libs/nestjs-kubernetes/tsconfig.lib.json",
+        "packageJson": "libs/nestjs-kubernetes/package.json",
+        "main": "libs/nestjs-kubernetes/src/index.ts",
+        "assets": ["libs/nestjs-kubernetes/*.md", "README.md"]
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@otwld/nestjs-kubernetes",
+  "version": "1.0.0",
+  "author": "OTWLD",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "kubernetes"
+  ],
+  "private": false,
+  "homepage": "https://github.com/otwld/nestjs-kubernetes",
+  "dependencies": {
+    "@nestjs/common": "^10.0.2",
+    "tslib": "^2.3.0",
+    "@kubernetes/client-node": "^1.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/otwld/nestjs-kubernetes/issues",
+    "description": "NestJS Module for Kubernetes Client API",
+    "email": "contact@otwld.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/otwld/nestjs-kubernetes.git"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "typings": "./src/index.d.ts",
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "module": "./dist/index.js"
+}

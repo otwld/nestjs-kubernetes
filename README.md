@@ -1,90 +1,144 @@
-# NestjsKubernetes
+# NestJS Kubernetes
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+![otwld_nestjs_kubernetes_banner](./banner.png)
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
-
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Finish your CI setup
-
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/jexijEI94o)
+![GitHub License](https://img.shields.io/github/license/otwld/nestjs-kubernetes)
+![Build Status](https://github.com/otwld/nestjs-kubernetes/actions/workflows/cd.yml/badge.svg)
+[![Discord](https://img.shields.io/badge/Discord-OTWLD-blue?logo=discord&logoColor=white)](https://discord.gg/U24mpqTynB)
+![NPM Downloads](https://img.shields.io/npm/dw/%40otwld%2Fnestjs-kubernetes)
 
 
-## Generate a library
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Register from KubeConfig file](#register-from-KubeConfig-file)
+  - [Register in cluster](#register-in-cluster)
+  - [Register multi cluster](#register-multi-cluster)
+- [Injecting KubeConfig](#injecting-kubeconfig)
+- [Support](#support)
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+## Installation
+
+```bash
+yarn add @otwld/nestjs-kubernetes @kubernetes/client-node
 ```
 
-## Run tasks
-
-To build the library use:
-
-```sh
-npx nx build pkg1
+```bash
+npm install @otwld/nestjs-kubernetes @kubernetes/client-node
 ```
 
-To run any task with Nx use:
+## Usage
 
-```sh
-npx nx <target> <project-name>
+### Register from KubeConfig file
+
+```typescript
+import { Module } from "@nestjs/common";
+import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
+
+@Module({
+  imports: [KubernetesModule.register([
+    {
+      name: 'KUBE_CLUSTER',
+      loadFrom: LoadFrom.FILE,
+      opts: {
+        file: '/path/to/kubeconfig',
+        context: 'cluster-1',
+      }
+    }
+  ])]
+})
+export class AppModule {
+}
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### Register in cluster
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```typescript
+import { Module } from "@nestjs/common";
+import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
 
-## Versioning and releasing
-
-To version and release the library use
-
-```
-npx nx release
-```
-
-Pass `--dry-run` to see what would happen without actually releasing the library.
-
-[Learn more about Nx release &raquo;](hhttps://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+@Module({
+  imports: [KubernetesModule.register([
+    {
+      name: 'KUBE_CLUSTER',
+      loadFrom: LoadFrom.CLUSTER,
+    }
+  ])]
+})
+export class AppModule {
+}
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+### Register multi cluster
 
-```sh
-npx nx sync:check
+```typescript
+import { Module } from "@nestjs/common";
+import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
+
+@Module({
+  imports: [KubernetesModule.register([
+    {
+      name: 'KUBE_CLUSTER_1',
+      loadFrom: LoadFrom.FILE,
+      opts: {
+        file: '/path/to/kubeconfig',
+        context: 'cluster-1'
+      }
+    },
+    {
+      name: 'KUBE_CLUSTER_2',
+      loadFrom: LoadFrom.FILE,
+      opts: {
+        file: '/path/to/kubeconfig',
+        context: 'cluster-2'
+      }
+    }
+  ])]
+})
+export class AppModule {
+}
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
 
+## Injecting KubeConfig
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```typescript
+// module.ts
+import { Module } from "@nestjs/common";
+import { KubernetesModule, LoadFrom } from '@otwld/nestjs-kubernetes';
+import { Service } from "./service";
 
-## Install Nx Console
+@Module({
+  imports: [KubernetesModule.register([
+    {
+      name: 'KUBE_CLUSTER',
+      loadFrom: LoadFrom.CLUSTER,
+    }
+  ])],
+  providers: [
+    Service,
+  ],
+})
+export class AppModule {}
+```
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+```typescript
+// service.ts
+import { Inject, Injectable } from "@nestjs/common";
+import { KubeConfig, CoreV1Api } from "@kubernetes/client-node";
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+@Injectable()
+export class Service {
+  private coreV1Api: CoreV1Api;
+  
+  constructor(@Inject("KUBE_CLUSTER") public kubeConfig: KubeConfig) {
+    this.coreV1Api = this.k8s.makeApiClient(CoreV1Api);
+  }
+}
+```
 
-## Useful links
+## Support
 
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- For questions, suggestions, and discussion about NestJS please refer to
+  the [NestJS issue page](https://github.com/nestjs/nest/issues)
+- For questions, suggestions, and discussion about NestJS Kubernetes please
+  visit [NestJS Kubernetes issue page](https://github.com/otwld/nestjs-kubernetes/issues) or join our [OTWLD Discord](https://discord.gg/U24mpqTynB)
