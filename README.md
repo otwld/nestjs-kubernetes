@@ -31,20 +31,23 @@ npm install @otwld/nestjs-kubernetes @kubernetes/client-node
 ### Register from KubeConfig file
 
 ```typescript
-import { Module } from "@nestjs/common";
-import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
+import { Module } from '@nestjs/common';
+import { KubernetesModule, LoadFrom } from '@otwld/nestjs-kubernetes';
 
 @Module({
-  imports: [KubernetesModule.register([
-    {
-      name: 'KUBE_CLUSTER',
-      loadFrom: LoadFrom.FILE,
-      opts: {
-        file: '/path/to/kubeconfig',
-        context: 'cluster-1',
+  imports: [KubernetesModule.register({
+    servers: [
+      {
+        name: 'KUBE_CLUSTER',
+        loadFrom: LoadFrom.FILE,
+        opts: {
+          file: '/path/to/kubeconfig',
+          context: 'cluster-1'
+        }
       }
-    }
-  ])]
+    ],
+    isGlobal: true
+  })]
 })
 export class AppModule {
 }
@@ -53,16 +56,19 @@ export class AppModule {
 ### Register in cluster
 
 ```typescript
-import { Module } from "@nestjs/common";
-import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
+import { Module } from '@nestjs/common';
+import { KubernetesModule, LoadFrom } from '@otwld/nestjs-kubernetes';
 
 @Module({
-  imports: [KubernetesModule.register([
-    {
-      name: 'KUBE_CLUSTER',
-      loadFrom: LoadFrom.CLUSTER,
-    }
-  ])]
+  imports: [KubernetesModule.register({
+    servers: [
+      {
+        name: 'KUBE_CLUSTER',
+        loadFrom: LoadFrom.CLUSTER
+      }
+    ], 
+    isGlobal: true
+  })]
 })
 export class AppModule {
 }
@@ -71,35 +77,38 @@ export class AppModule {
 ### Register multi cluster
 
 ```typescript
-import { Module } from "@nestjs/common";
-import { KubernetesModule, LoadFrom } from "@otwld/nestjs-kubernetes";
+import { Module } from '@nestjs/common';
+import { KubernetesModule, LoadFrom } from '@otwld/nestjs-kubernetes';
 
 @Module({
-  imports: [KubernetesModule.register([
-    {
-      name: 'KUBE_CLUSTER_1',
-      loadFrom: LoadFrom.FILE,
-      opts: {
-        file: '/path/to/kubeconfig',
-        context: 'cluster-1'
+  imports: [KubernetesModule.register({
+    servers: [
+      {
+        name: 'KUBE_CLUSTER_1',
+        loadFrom: LoadFrom.FILE,
+        opts: {
+          file: '/path/to/kubeconfig',
+          context: 'cluster-1'
+        }
+      },
+      {
+        name: 'KUBE_CLUSTER_2',
+        loadFrom: LoadFrom.FILE,
+        opts: {
+          file: '/path/to/kubeconfig',
+          context: 'cluster-2'
+        }
       }
-    },
-    {
-      name: 'KUBE_CLUSTER_2',
-      loadFrom: LoadFrom.FILE,
-      opts: {
-        file: '/path/to/kubeconfig',
-        context: 'cluster-2'
-      }
-    }
-  ])]
+    ], 
+    isGlobal: true
+  })]
 })
 export class AppModule {
 }
 ```
 
 
-## Injecting KubeConfig
+## Injecting KubeConfig in scoped providers
 
 ```typescript
 // module.ts
@@ -131,7 +140,7 @@ export class Service {
   private coreV1Api: CoreV1Api;
   
   constructor(@Inject("KUBE_CLUSTER") public kubeConfig: KubeConfig) {
-    this.coreV1Api = this.k8s.makeApiClient(CoreV1Api);
+    this.coreV1Api = this.kubeConfig.makeApiClient(CoreV1Api);
   }
 }
 ```
