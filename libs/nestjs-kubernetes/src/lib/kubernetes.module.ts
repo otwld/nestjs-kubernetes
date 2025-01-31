@@ -22,10 +22,10 @@ import { KUBERNETES_CONNECTION } from './kubernetes.constants';
 })
 export class KubernetesModule {
   static register(options: KubernetesModuleOptions): DynamicModule {
-    const clientsOptions: KubernetesProviderOptions[] = !Array.isArray(options)
-      ? options.clients
+    const serversOptions: KubernetesProviderOptions[] = !Array.isArray(options)
+      ? options.servers
       : options;
-    const clients = (clientsOptions || []).map(
+    const servers = (serversOptions || []).map(
       (item: KubernetesProviderOptions) => {
         return {
           provide: item.name || KUBERNETES_CONNECTION,
@@ -36,21 +36,21 @@ export class KubernetesModule {
     return {
       module: KubernetesModule,
       global: !Array.isArray(options) && options.isGlobal,
-      providers: clients,
-      exports: clients,
+      providers: servers,
+      exports: servers,
     };
   }
 
   static registerAsync(options: KubernetesModuleAsyncOptions): DynamicModule {
-    const clientsOptions = !Array.isArray(options) ? options.clients : options;
-    const providers: Provider[] = clientsOptions.reduce(
+    const serversOptions = !Array.isArray(options) ? options.servers : options;
+    const providers: Provider[] = serversOptions.reduce(
       (accProviders: Provider[], item) =>
         accProviders
           .concat(this.createAsyncProviders(item))
           .concat(item.extraProviders || []),
       []
     );
-    const imports = clientsOptions.reduce((accImports, option) => {
+    const imports = serversOptions.reduce((accImports, option) => {
       if (!option.imports) {
         return accImports;
       }

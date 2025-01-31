@@ -14,14 +14,14 @@ export type KubernetesProviderOptions = LoadFromOptions & {
 export type KubernetesModuleOptions =
   | Array<KubernetesProviderOptions>
   | {
-      clients: Array<KubernetesProviderOptions>;
+      servers: Array<KubernetesProviderOptions>;
       isGlobal?: boolean;
     };
 
 export interface KubernetesModuleOptionsFactory {
   createKubernetesOptions():
-    | Promise<KubernetesProviderOptions>
-    | KubernetesProviderOptions;
+    | Promise<LoadFromOptions>
+    | LoadFromOptions;
 }
 
 export interface KubernetesProviderAsyncOptions
@@ -30,7 +30,7 @@ export interface KubernetesProviderAsyncOptions
   useClass?: Type<KubernetesModuleOptionsFactory>;
   useFactory?: (
     ...args: any[]
-  ) => Promise<KubernetesProviderOptions> | KubernetesProviderOptions;
+  ) => Promise<LoadFromOptions> | LoadFromOptions;
   inject?: any[];
   extraProviders?: Provider[];
   name: string | symbol;
@@ -39,7 +39,7 @@ export interface KubernetesProviderAsyncOptions
 export type KubernetesModuleAsyncOptions =
   | Array<KubernetesProviderAsyncOptions>
   | {
-      clients: Array<KubernetesProviderAsyncOptions>;
+      servers: Array<KubernetesProviderAsyncOptions>;
       isGlobal?: boolean;
     };
 
@@ -61,7 +61,7 @@ export interface LoadFromFileOptions {
 
 export interface LoadFromClusterOptions {
   loadFrom: LoadFrom.CLUSTER;
-  opts: {
+  opts?: {
     pathPrefix?: string;
     context?: string
   };
@@ -77,14 +77,14 @@ export interface LoadFromStringOptions {
 
 export interface LoadFromOptionsOptions {
   loadFrom: LoadFrom.OPTIONS;
-  opts: any & {
+  opts?: any & {
     context?: string
   };
 }
 
 export interface LoadFromDefaultOptions {
   loadFrom: LoadFrom.DEFAULT;
-  opts: Partial<ConfigOptions> & {
+  opts?: Partial<ConfigOptions> & {
     contextFromStartingConfig?: boolean;
     context?: string
   };
