@@ -20,7 +20,7 @@
         "tsConfig": "libs/nestjs-kubernetes/tsconfig.lib.json",
         "packageJson": "libs/nestjs-kubernetes/package.json",
         "main": "libs/nestjs-kubernetes/src/index.ts",
-        "assets": ["libs/nestjs-kubernetes/*.md", "README.md"]
+        "assets": ["libs/nestjs-kubernetes/*.md", "README.md", "LICENSE"]
       }
     },
     "nx-release-publish": {

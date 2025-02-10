@@ -10,24 +10,6 @@ export interface IKubernetesFactory {
 }
 
 export class KubernetesFactory {
-  /*public static create(
-    options: { loadFrom: LoadFrom.FILE } & KubernetesProviderOptions
-  ): KubeConfig;
-  public static create(
-    options: { loadFrom: LoadFrom.CLUSTER } & KubernetesProviderOptions
-  ): KubeConfig;
-  public static create(
-    options: { loadFrom: LoadFrom.STRING } & KubernetesProviderOptions
-  ): KubeConfig;
-  public static create(
-    options: { loadFrom: LoadFrom.OPTIONS } & KubernetesProviderOptions
-  ): KubeConfig;
-  public static create(
-    options: { loadFrom: LoadFrom.DEFAULT } & KubernetesProviderOptions
-  ): KubeConfig;
-  public static create(
-    options: { loadFrom: LoadFrom.CLUSTER_AND_USER } & KubernetesProviderOptions
-  ): KubeConfig;*/
   public static create(options: LoadFromOptions): KubeConfig {
     const kubeConfig: KubeConfig = new KubeConfig();
     switch (options.loadFrom) {
